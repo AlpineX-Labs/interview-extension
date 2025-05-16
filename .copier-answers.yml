@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v4.3.8
+_src_path: https://github.com/jupyterlab/extension-template
+author_email: multiplyr@gmail.com
+author_name: Multiplyr
+has_binder: false
+has_settings: true
+kind: frontend
+labextension_name: interview-extension
+project_short_description: A JupyterLab extension.
+python_name: interview_extension
+repository: ''
+test: false
+

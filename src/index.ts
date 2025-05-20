@@ -1,15 +1,17 @@
-import {
+import type {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { ICommandPalette, IToolbarWidgetRegistry } from '@jupyterlab/apputils';
 import {
-  INotebookTracker,
-  Notebook,
-  NotebookActions
-} from '@jupyterlab/notebook';
+  CommandToolbarButton,
+  ICommandPalette,
+  IToolbarWidgetRegistry
+} from '@jupyterlab/apputils';
+import { INotebookTracker, NotebookActions } from '@jupyterlab/notebook';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
+
+const commandID: string = 'interview-extension:insert-simple-cell';
 
 /**
  * Initialization data for the interview-extension extension.
@@ -24,11 +26,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
     app: JupyterFrontEnd,
     notebooks: INotebookTracker,
     palette: ICommandPalette,
-    settingRegistry: ISettingRegistry | null,
-    toolbarRegistry: IToolbarWidgetRegistry | null
+    settingRegistry: ISettingRegistry | null
   ) => {
-    console.log('JupyterLab extension interview-extension is activated!');
-
     if (settingRegistry) {
       settingRegistry
         .load(plugin.id)
@@ -46,22 +45,41 @@ const plugin: JupyterFrontEndPlugin<void> = {
         });
     }
 
-    const testNotebookCommand: string = 'interview-extension:test-notebook';
-    app.commands.addCommand(testNotebookCommand, {
-      label: 'Test Notebook',
-      execute: async () => {
-        // Print the active notebook
-        console.log(notebooks.currentWidget);
-        // Example to add a cell
-        NotebookActions.insertBelow(<Notebook>notebooks.currentWidget?.content);
-        // Example to add text into a cell
-        notebooks.currentWidget?.content.activeCell?.model.sharedModel.setSource(
-          'Hello World'
-        );
+    app.commands.addCommand(commandID, {
+      label: 'Insert Simple Code Cell',
+      execute: () => {
+        const notebookPanel = notebooks.currentWidget;
+        if (!notebookPanel) {
+          console.warn('No active notebook!');
+          return;
+        }
+
+        NotebookActions.insertBelow(notebookPanel.content);
+
+        const activeCell = notebookPanel.content.activeCell;
+        if (activeCell) {
+          activeCell.model.sharedModel.setSource(
+            'print("Hello, JupyterLab!").'
+          );
+
+          activeCell.model.setMetadata('type', 'instructions');
+        }
+
+        notebookPanel.content.activate();
       }
     });
 
-    palette.addItem({ command: testNotebookCommand, category: 'AI Tools' });
+    // Add the command to the palette
+    palette.addItem({ command: commandID, category: 'AI Tools' });
+
+    // Create a toolbar button
+    notebooks.widgetAdded.connect((_, notebook) => {
+      const button = new CommandToolbarButton({
+        commands: app.commands,
+        id: commandID
+      });
+      notebook.toolbar.insertItem(10, 'createCodeCell', button);
+    });
   }
 };
 

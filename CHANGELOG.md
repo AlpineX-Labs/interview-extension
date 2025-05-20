@@ -9,3 +9,20 @@
 - Cell metadata is tagged with type "instructions"
 - Command is available in the Command Palette under "AI Tools" category
 
+
+## [0.2.0] - 05-26-2025
+
+### Added
+- New Interview Tools sidebar panel that shows notebook and cell information
+- Sidebar displays active notebook name and status
+- List of all cells in the notebook with:
+  - Cell metadata and ID
+  - Truncated preview of cell contents
+  - Visual indicator for active cell
+  - Click-to-select cell functionality
+- Automatic refresh when notebook or cells change
+- Command to show sidebar available in Command Palette under "AI Tools"
+- Dark/light theme support for sidebar UI elements
+
+
+

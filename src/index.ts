@@ -58,11 +58,15 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
         const activeCell = notebookPanel.content.activeCell;
         if (activeCell) {
-          activeCell.model.sharedModel.setSource(
-            'print("Hello, JupyterLab!").'
-          );
+          activeCell.model.sharedModel.setSource('print("Hello, JupyterLab!")');
 
           activeCell.model.setMetadata('type', 'instructions');
+
+          // Run the cell
+          NotebookActions.run(
+            notebookPanel.content,
+            notebookPanel.sessionContext
+          );
         }
 
         notebookPanel.content.activate();
